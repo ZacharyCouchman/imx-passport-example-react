@@ -14,7 +14,7 @@
 }
 
 .user-info {
-  width: 550px;
+  width: 100%;
   padding: 12px;
   border-radius: 12px;
   border: solid lightgray 0.5px;
@@ -25,11 +25,28 @@
 
 .user-info-row {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
   width: '100%';
 }
+
+.space {
+  gap: 4px;
+}
+
+@media screen and (min-width: 600px) {
+  .user-info {
+    width: 550px;
+  }
+
+  .user-info-row {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+
 
 .docs-link-container {
   display: flex;
