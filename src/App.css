@@ -55,3 +55,8 @@
   align-items: center;
   width: 100%;
 }
+
+.divider {
+  border-color: lightgray;
+  border-width: 0.5px;
+}

@@ -21,6 +21,8 @@ export const passportInstance = new passport.Passport({
   scope: 'openid offline_access email transact',
 });
 
+export const passportProvider = passportInstance.connectEvm();
+
 
 // Helper Functions
 export function parseJwt(token: string) {
