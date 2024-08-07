@@ -1,30 +1,18 @@
 import { passport } from '@imtbl/sdk'
-import { useEffect, useState } from 'react'
-import { Provider, UserProfile } from '@imtbl/sdk/passport';
+import { useState } from 'react'
+import { UserProfile } from '@imtbl/sdk/passport';
 import { PassportButton } from './components/PassportButton';
-import { parseJwt } from './utils/passport';
+import { parseJwt, passportProvider } from './utils/passport';
 import './App.css'
+import { ExternalWallets } from './components/ExternalWallets';
 
 function App({passportInstance}: {passportInstance: passport.Passport}) {
   const [userInfo, setUserInfo] = useState<UserProfile>();
   const [walletAddress, setWalletAddress] = useState<string>();
 
-  // Providers to use for Immmutable zkEVM and ImmutableX
-  const [zkEVMProvider, setZkEVMProvider] = useState<Provider>();
-  // const [imxProvider, setImxProvider] = useState<IMXProvider>();
-
-  useEffect(() => {
-    // create zkEVMProvider to use Passport with Immutable zkEVM
-    setZkEVMProvider(passportInstance.connectEvm());
-
-    // create ImxProvider to use Passport with ImmutableX
-    // passportInstance.connectImx().then((imxProvider) => setImxProvider(imxProvider))
-    
-  }, [passportInstance]);
-
   async function login(){
     try{
-      await zkEVMProvider?.request({ method: 'eth_requestAccounts' });
+      await passportProvider?.request({ method: 'eth_requestAccounts' });
     } catch(err) {
       console.log("Failed to login");
       console.error(err);
@@ -41,7 +29,7 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
     try{
       const idToken = await passportInstance.getIdToken();
       const parsedIdToken = parseJwt(idToken!);
-      setWalletAddress(parsedIdToken.passport.imx_eth_address)
+      setWalletAddress(parsedIdToken.passport.zkevm_eth_address);
     } catch(err) {
       console.log("Failed to fetch idToken");
       console.error(err);
@@ -68,11 +56,13 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
       {userInfo && (
         <>
         <div className='user-info'>
-          <PassportButton title="Logout" onClick={logout} />
+          <div className='user-info-row'><p><strong>Passport info</strong></p><PassportButton title="Logout" onClick={logout} /></div>
           <div className='user-info-row'><strong>Id:</strong><p>{userInfo.sub}</p></div>
           <div className='user-info-row'><strong>Email:</strong><p>{userInfo.email}</p></div>
           {walletAddress && <div className='user-info-row'><strong>Wallet:</strong><p>{walletAddress}</p></div>}
           <div className='user-info-row space'><button onClick={idTokenClick}>Inspect Id Token</button><button onClick={accessTokenClick}>Inspect Access Token</button></div>
+          <hr className='divider' />
+          <ExternalWallets />
         </div>
         <div className='docs-link-container'>
           <a href='https://docs.immutable.com/docs/zkEVM/products/passport' target='_blank'>Immutable zkEVM Docs</a>
@@ -80,6 +70,7 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
         </div>
         </>
       )}
+
     </div>
   )
 }

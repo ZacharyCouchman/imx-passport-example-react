@@ -10,14 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@imtbl/sdk": "^1.20.5",
+    "@imtbl/sdk": "^1.46.15",
+    "@web3modal/ethers5": "^5.0.11",
     "buffer": "^6.0.3",
+    "ethers": "^5.7.2",
     "jsbi": "^3.2.5",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
+    "siwe": "^2.3.2",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
