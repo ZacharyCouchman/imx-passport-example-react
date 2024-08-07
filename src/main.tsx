@@ -6,7 +6,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import PassportRedirect from './components/PassportRedirect.tsx'
 import { passportInstance } from './utils/passport.ts'
 import { createWeb3Modal } from '@web3modal/ethers5/react'
-import { ethersConfig, imtblzkEvmTestnet, projectId } from './utils/config.ts'
+import { ethersConfig, mainnet, projectId } from './utils/config.ts'
 
 const router = createBrowserRouter([
   {
@@ -21,13 +21,14 @@ const router = createBrowserRouter([
 
 createWeb3Modal({
   ethersConfig,
-  chains: [imtblzkEvmTestnet],
+  chains: [mainnet],
   projectId,
   enableAnalytics: true,
   themeMode: 'dark',
   themeVariables: {
     '--w3m-border-radius-master': '1px'
-  }
+  },
+  allowUnsupportedChain: true
 })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

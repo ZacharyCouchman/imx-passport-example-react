@@ -3,18 +3,20 @@ import {
   useWeb3Modal, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers5/react';
 import './ExternalWallets.css';
 import { passportInstance, passportProvider } from '../utils/passport';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { generateNonce } from 'siwe';
+import { mainnet } from '../utils/config';
 
 export const ExternalWallets = () => {
   const {open} = useWeb3Modal()
   const { walletProvider } = useWeb3ModalProvider();
-  const {address} = useWeb3ModalAccount();
+  const {address, chainId} = useWeb3ModalAccount();
 
   // Linked Wallets
   const [linkedWallets, setLinkedWallets] = useState<string[] | undefined>(undefined);
   // External Wallets
-  const [loadingExternal, setLoadingExternal] = useState(false)
+  const [loadingExternal, setLoadingExternal] = useState(false);
+  const [intentToLinkWallet, setIntentToLinkWallet] = useState(false)
 
   async function fetchLinkedWallets() {
     const linkedAddresses = await passportInstance.getLinkedAddresses();
@@ -24,8 +26,14 @@ export const ExternalWallets = () => {
 
   const linkWallet = useCallback(async () => {
     if(!walletProvider || !walletProvider.request) return;
-    setLoadingExternal(true);
+    setIntentToLinkWallet(true);
+    if(chainId !== mainnet.chainId) {
+      alert("You'll need to switch to the Ethereum network in your wallet before linking it to Passport.")
+      open({view: 'Networks'})
+      return;
+    }
 
+    setLoadingExternal(true);
     let accounts: string[] = [];
     let nonce = '';
     try {
@@ -35,12 +43,13 @@ export const ExternalWallets = () => {
       console.error(e);
       return;
     } finally{
+      setIntentToLinkWallet(false);
       setLoadingExternal(false);
     }
 
     const typedData = {
       domain: {
-        chainId: 13473
+        chainId: mainnet.chainId,
       },
       message: {
         walletAddress: address.toLowerCase(),
@@ -92,6 +101,7 @@ export const ExternalWallets = () => {
       console.log(e);
       return;
     } finally {
+      setIntentToLinkWallet(false);
       setLoadingExternal(false);
     }
     
@@ -103,15 +113,23 @@ export const ExternalWallets = () => {
         nonce: nonce
       });
       console.log(result);
-    } catch (e) {
+      setTimeout(() => fetchLinkedWallets(), 200);
+    } catch (e: unknown) {
       // handle error
       console.error("There was an error linking the external wallet to Passport");
       console.error(e);
+      alert(e);
     } finally {
+      setIntentToLinkWallet(false);
       setLoadingExternal(false);
     }
-    
-  }, [walletProvider, address])
+  }, [walletProvider, address, chainId, open])
+
+  useEffect(() => {
+    if(chainId === mainnet.chainId && intentToLinkWallet){
+      linkWallet();
+    }
+  }, [chainId, intentToLinkWallet, linkWallet])
 
   return (
     <div className='external-wallets-section'>
@@ -122,7 +140,7 @@ export const ExternalWallets = () => {
       {linkedWallets && linkedWallets.length === 0 && (<p>There are no externally linked wallets with this Passport</p>)}
       <div className='user-info-row'>
         <p><strong>Link an external wallet</strong></p>
-        {!walletProvider && !loadingExternal && <button onClick={() => open()}>Connect EOA Wallet</button>}
+        {!walletProvider && !loadingExternal && <button onClick={() =>{open()}}>Connect EOA Wallet</button>}
         {walletProvider && !loadingExternal && <button onClick={() => linkWallet()}>Link External Wallet</button>}
         {loadingExternal && <p>Loading...</p>}
       </div>
