@@ -135,7 +135,7 @@ export const ExternalWallets = () => {
       <div className='user-info-row'>
         <p><strong>External Wallets</strong></p><button onClick={() => fetchLinkedWallets()}>Get Linked Wallets</button>
       </div>
-      {linkedWallets && linkedWallets.length > 0 && linkedWallets.map((address) => (<p key={address}>{address}</p>))}
+      {linkedWallets && linkedWallets.length > 0 && linkedWallets.map((address) => (<p key={address} className='wallet-address'>{address}</p>))}
       {linkedWallets && linkedWallets.length === 0 && (<p>There are no externally linked wallets with this Passport</p>)}
       <div className='user-info-row'>
         <p><strong>Link an external wallet</strong></p>

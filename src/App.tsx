@@ -29,7 +29,7 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
     try{
       const idToken = await passportInstance.getIdToken();
       const parsedIdToken = parseJwt(idToken!);
-      setWalletAddress(parsedIdToken.passport.imx_eth_address)
+      setWalletAddress(parsedIdToken.passport.zkevm_eth_address);
     } catch(err) {
       console.log("Failed to fetch idToken");
       console.error(err);
@@ -56,7 +56,7 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
       {userInfo && (
         <>
         <div className='user-info'>
-          <PassportButton title="Logout" onClick={logout} />
+          <div className='user-info-row'><p><strong>Passport info</strong></p><PassportButton title="Logout" onClick={logout} /></div>
           <div className='user-info-row'><strong>Id:</strong><p>{userInfo.sub}</p></div>
           <div className='user-info-row'><strong>Email:</strong><p>{userInfo.email}</p></div>
           {walletAddress && <div className='user-info-row'><strong>Wallet:</strong><p>{walletAddress}</p></div>}
