@@ -1,6 +1,5 @@
 import { 
-  //useDisconnect, 
-  useWeb3Modal, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers5/react';
+  useWalletInfo, useDisconnect, useWeb3Modal, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers5/react';
 import './ExternalWallets.css';
 import { passportInstance, passportProvider } from '../utils/passport';
 import { useCallback, useEffect, useState } from 'react';
@@ -9,8 +8,10 @@ import { mainnet } from '../utils/config';
 
 export const ExternalWallets = () => {
   const {open} = useWeb3Modal()
+  const {disconnect} = useDisconnect();
   const { walletProvider } = useWeb3ModalProvider();
   const {address, chainId} = useWeb3ModalAccount();
+  const {walletInfo} = useWalletInfo();
 
   // Linked Wallets
   const [linkedWallets, setLinkedWallets] = useState<string[] | undefined>(undefined);
@@ -33,6 +34,7 @@ export const ExternalWallets = () => {
       return;
     }
 
+    setIntentToLinkWallet(false);
     setLoadingExternal(true);
     let accounts: string[] = [];
     let nonce = '';
@@ -43,7 +45,6 @@ export const ExternalWallets = () => {
       console.error(e);
       return;
     } finally{
-      setIntentToLinkWallet(false);
       setLoadingExternal(false);
     }
 
@@ -101,18 +102,17 @@ export const ExternalWallets = () => {
       console.log(e);
       return;
     } finally {
-      setIntentToLinkWallet(false);
       setLoadingExternal(false);
     }
     
     try {
       const result = await passportInstance.linkExternalWallet({
-        type: "io.metamask", // This must be a valid rdns, hardcoding to MetaMask for now
+        type: walletInfo?.rdns as string || '', // This must be a valid rdns, hardcoding to MetaMask for now
         walletAddress: address.toLowerCase(),
         signature: signature,
         nonce: nonce
       });
-      console.log(result);
+      alert(`Successfully linked ${result.address}`)
       setTimeout(() => fetchLinkedWallets(), 200);
     } catch (e: unknown) {
       // handle error
@@ -120,10 +120,9 @@ export const ExternalWallets = () => {
       console.error(e);
       alert(e);
     } finally {
-      setIntentToLinkWallet(false);
       setLoadingExternal(false);
     }
-  }, [walletProvider, address, chainId, open])
+  }, [walletProvider, address, chainId, open, walletInfo])
 
   useEffect(() => {
     if(chainId === mainnet.chainId && intentToLinkWallet){
@@ -140,8 +139,8 @@ export const ExternalWallets = () => {
       {linkedWallets && linkedWallets.length === 0 && (<p>There are no externally linked wallets with this Passport</p>)}
       <div className='user-info-row'>
         <p><strong>Link an external wallet</strong></p>
-        {!walletProvider && !loadingExternal && <button onClick={() =>{open()}}>Connect EOA Wallet</button>}
-        {walletProvider && !loadingExternal && <button onClick={() => linkWallet()}>Link External Wallet</button>}
+        {!walletProvider && !loadingExternal && <button onClick={() => open()}>Connect EOA Wallet</button>}
+        {walletProvider && !loadingExternal &&<><button onClick={disconnect}>Disconnect</button><button onClick={() => linkWallet()}>Link External Wallet</button></> }
         {loadingExternal && <p>Loading...</p>}
       </div>
     </div>
