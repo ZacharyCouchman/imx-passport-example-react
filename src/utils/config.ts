@@ -5,14 +5,29 @@ import { defaultConfig } from "@web3modal/ethers5/react"
  * Application Configuration
  */
 
-export const applicationEnvironment = Environment.SANDBOX;
+export const applicationEnvironment = import.meta.env.VITE_IMMUTABLE_ENVIRONMENT.toLowerCase() === Environment.PRODUCTION
+  ? Environment.PRODUCTION
+  : Environment.SANDBOX;
 
-export const immutablePublishableKey: string = import.meta.env.VITE_IMMUTABLE_PUBLISHABLE_KEY;
+export const immutablePublishableKey: string = applicationEnvironment === Environment.PRODUCTION
+  ? import.meta.env.VITE_PRODUCTION_IMMUTABLE_PUBLISHABLE_KEY
+  : import.meta.env.VITE_SANDBOX_IMMUTABLE_PUBLISHABLE_KEY;
 
-export const passportClientId: string = import.meta.env.VITE_PASSPORT_CLIENT_ID;
-export const passportRedirectUri: string = import.meta.env.VITE_PASSPORT_LOGIN_REDIRECT_URI;
-export const passportLogoutRedirectUri: string = import.meta.env.VITE_PASSPORT_LOGOUT_REDIRECT_URI;
+export const passportClientId: string = applicationEnvironment === Environment.PRODUCTION
+  ? import.meta.env.VITE_PRODUCTION_PASSPORT_CLIENT_ID
+  : import.meta.env.VITE_PRODUCTION_PASSPORT_CLIENT_ID;
 
+export const passportRedirectUri: string = applicationEnvironment === Environment.PRODUCTION
+  ? import.meta.env.VITE_PRODUCTION_PASSPORT_LOGIN_REDIRECT_URI
+  : import.meta.env.VITE_SANDBOX_PASSPORT_LOGIN_REDIRECT_URI;
+
+export const passportLogoutRedirectUri: string = applicationEnvironment === Environment.PRODUCTION
+  ? import.meta.env.VITE_PRODUCTION_PASSPORT_LOGOUT_REDIRECT_URI
+  : import.meta.env.VITE_SANDBOX_PASSPORT_LOGOUT_REDIRECT_URI;
+
+export const passportDashboardUrl: string = applicationEnvironment === Environment.PRODUCTION
+  ? "https://passport.immutable.com"
+  : "https://passport.sandbox.immutable.com";
 
 
 /**

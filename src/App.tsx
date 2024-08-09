@@ -5,6 +5,7 @@ import { PassportButton } from './components/PassportButton';
 import { parseJwt, passportProvider } from './utils/passport';
 import './App.css'
 import { ExternalWallets } from './components/ExternalWallets';
+import { passportDashboardUrl } from './utils/config';
 
 function App({passportInstance}: {passportInstance: passport.Passport}) {
   const [userInfo, setUserInfo] = useState<UserProfile>();
@@ -56,7 +57,11 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
       {userInfo && (
         <>
         <div className='user-info'>
-          <div className='user-info-row'><p><strong>Passport info</strong></p><PassportButton title="Logout" onClick={logout} /></div>
+          <div className='user-info-row'>
+            <p><strong>Passport info</strong></p>
+            <a href={passportDashboardUrl} target='_blank'>Passport Dashboard</a>
+            <PassportButton title="Logout" onClick={logout} />
+          </div>
           <div className='user-info-row'><strong>Id:</strong><p>{userInfo.sub}</p></div>
           <div className='user-info-row'><strong>Email:</strong><p>{userInfo.email}</p></div>
           {walletAddress && <div className='user-info-row'><strong>Wallet:</strong><p>{walletAddress}</p></div>}
@@ -68,9 +73,9 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
           <a href='https://docs.immutable.com/docs/zkEVM/products/passport' target='_blank'>Immutable zkEVM Docs</a>
           <a href='https://docs.immutable.com/docs/x/passport' target='_blank'>Immutable X Docs</a>
         </div>
+        
         </>
       )}
-
     </div>
   )
 }

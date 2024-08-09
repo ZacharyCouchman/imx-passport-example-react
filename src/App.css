@@ -46,8 +46,6 @@
   }
 }
 
-
-
 .docs-link-container {
   display: flex;
   flex-direction: row;
@@ -59,4 +57,13 @@
 .divider {
   border-color: lightgray;
   border-width: 0.5px;
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 4px;
 }
