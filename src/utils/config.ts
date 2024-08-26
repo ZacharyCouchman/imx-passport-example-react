@@ -76,7 +76,7 @@ export const imtblzkEvmMainnet = {
 export const metadata = {
   name: 'Passport Example',
   description: 'Login and inspect Immutable Passport features',
-  url: import.meta.env.VITE_PASSPORT_LOGIN_REDIRECT_URI!, // origin must match your domain & subdomain
+  url: passportLogoutRedirectUri, // origin must match your domain & subdomain
   icons: []
 }
 
