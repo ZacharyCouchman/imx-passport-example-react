@@ -5,7 +5,8 @@ import { PassportButton } from './components/PassportButton';
 import { parseJwt, passportProvider } from './utils/passport';
 import './App.css'
 import { ExternalWallets } from './components/ExternalWallets';
-import { passportDashboardUrl } from './utils/config';
+import { passportDashboardUrl, twaTestMode } from './utils/config';
+import Telegram from '@twa-dev/sdk';
 
 function App({passportInstance}: {passportInstance: passport.Passport}) {
   const [userInfo, setUserInfo] = useState<UserProfile>();
@@ -51,9 +52,15 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
     passportInstance.logout();
   }
 
+  function testWindowOpen() {
+    const newWindow = window.open("https://passport.immutable.com");
+    setTimeout(() => newWindow?.close(), 5000);
+  }
+
   return (
     <div id="app">
       {!userInfo && <PassportButton title="Sign in with Immutable" onClick={login} />}
+      {twaTestMode && <button onClick={testWindowOpen}>Try Open Window</button>}
       {userInfo && (
         <>
         <div className='user-info'>

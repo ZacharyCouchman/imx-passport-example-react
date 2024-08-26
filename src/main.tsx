@@ -7,6 +7,9 @@ import PassportRedirect from './components/PassportRedirect.tsx'
 import { passportInstance } from './utils/passport.ts'
 import { createWeb3Modal } from '@web3modal/ethers5/react'
 import { ethersConfig, mainnet, projectId } from './utils/config.ts'
+import Telegram from "@twa-dev/sdk"
+
+Telegram.ready();
 
 const router = createBrowserRouter([
   {
