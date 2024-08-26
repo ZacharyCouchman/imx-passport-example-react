@@ -15,7 +15,7 @@ export const immutablePublishableKey: string = applicationEnvironment === Enviro
 
 export const passportClientId: string = applicationEnvironment === Environment.PRODUCTION
   ? import.meta.env.VITE_PRODUCTION_PASSPORT_CLIENT_ID
-  : import.meta.env.VITE_PRODUCTION_PASSPORT_CLIENT_ID;
+  : import.meta.env.VITE_SANDBOX_PASSPORT_CLIENT_ID;
 
 export const passportRedirectUri: string = applicationEnvironment === Environment.PRODUCTION
   ? import.meta.env.VITE_PRODUCTION_PASSPORT_LOGIN_REDIRECT_URI
