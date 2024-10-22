@@ -19,6 +19,8 @@ export const passportInstance = new passport.Passport({
   logoutRedirectUri: passportLogoutRedirectUri,
   audience: 'platform_api',
   scope: 'openid offline_access email transact',
+  // Set crossSdkBridgeEnabled to enable pre-approved transactions
+  crossSdkBridgeEnabled: true,
 });
 
 export const passportProvider = passportInstance.connectEvm({ announceProvider: false }); // announceProvider set to false so Passport doesn't show in Web3Modal
