@@ -29,9 +29,6 @@ export const passportDashboardUrl: string = applicationEnvironment === Environme
   ? "https://passport.immutable.com"
   : "https://passport.sandbox.immutable.com";
 
-export const twaTestMode: boolean = import.meta.env.VITE_TWA_TEST_MODE === "true" || import.meta.env.VITE_TWA_TEST_MODE === true;
-
-
 /**
  * Web3Modal Configuration
  */

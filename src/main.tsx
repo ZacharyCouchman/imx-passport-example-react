@@ -7,9 +7,6 @@ import PassportRedirect from './components/PassportRedirect.tsx'
 import { passportInstance } from './utils/passport.ts'
 import { createWeb3Modal } from '@web3modal/ethers5/react'
 import { ethersConfig, mainnet, projectId } from './utils/config.ts'
-import Telegram from "@twa-dev/sdk"
-
-Telegram.ready();
 
 const router = createBrowserRouter([
   {
@@ -31,7 +28,7 @@ createWeb3Modal({
   themeVariables: {
     '--w3m-border-radius-master': '1px'
   },
-  allowUnsupportedChain: true
+  allowUnsupportedChain: false
 })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
