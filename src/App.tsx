@@ -2,37 +2,39 @@ import { passport } from '@imtbl/sdk'
 import { useState } from 'react'
 import { UserProfile } from '@imtbl/sdk/passport';
 import { PassportButton } from './components/PassportButton';
-import { parseJwt, passportProvider } from './utils/passport';
 import './App.css'
 import { ExternalWallets } from './components/ExternalWallets';
 import { passportDashboardUrl } from './utils/config';
+
+import WebApp from '@twa-dev/sdk'
+WebApp.ready();
 
 function App({passportInstance}: {passportInstance: passport.Passport}) {
   const [userInfo, setUserInfo] = useState<UserProfile>();
   const [walletAddress, setWalletAddress] = useState<string>();
 
   async function login(){
-    try{
-      await passportProvider?.request({ method: 'eth_requestAccounts' });
-    } catch(err) {
-      console.log("Failed to login");
-      console.error(err);
-    }
+    // Use loginWithDeviceFlow as the login method for Telegram Mini App to ensure support for all devices
+    const deviceFlowParams = await passportInstance.loginWithDeviceFlow();
+    // Open the device flow url using the openLink function on the telegram sdk
+    WebApp.openLink(deviceFlowParams.url);
+    // Wait for the user to complete the login before calling eth_requestAccounts
+    await passportInstance.loginWithDeviceFlowCallback(
+        deviceFlowParams.deviceCode,
+        deviceFlowParams.interval,
+    );
+    // Get the provider and call eth_requestAccounts to get the user's wallet address
+    const provider = passportInstance.connectEvm();
+    const [userAddress] = await provider.request({
+        method: "eth_requestAccounts",
+    });
+    setWalletAddress(userAddress);
 
     try{
       const userProfile = await passportInstance.getUserInfo();
       setUserInfo(userProfile)
     } catch(err) {
       console.log("Failed to fetch user info");
-      console.error(err);
-    }
-
-    try{
-      const idToken = await passportInstance.getIdToken();
-      const parsedIdToken = parseJwt(idToken!);
-      setWalletAddress(parsedIdToken.passport.zkevm_eth_address);
-    } catch(err) {
-      console.log("Failed to fetch idToken");
       console.error(err);
     }
   }
