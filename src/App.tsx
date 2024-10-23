@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { UserProfile } from '@imtbl/sdk/passport';
 import { PassportButton } from './components/PassportButton';
 import './App.css'
-import { ExternalWallets } from './components/ExternalWallets';
 import { passportDashboardUrl } from './utils/config';
 
 import WebApp from '@twa-dev/sdk'
