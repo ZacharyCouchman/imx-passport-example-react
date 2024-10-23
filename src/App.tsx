@@ -41,12 +41,15 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
 
   async function idTokenClick() {
     const idToken = await passportInstance.getIdToken();
-    window.open(`https://jwt.io?token=${idToken}`, "_blank")
+    WebApp.openLink(`https://jwt.io?token=${idToken}`);
+    // WebApp.showPopup
+    // window.open(`https://jwt.io?token=${idToken}`, "_blank")
   }
 
   async function accessTokenClick() {
     const accessToken = await passportInstance.getAccessToken();
-    window.open(`https://jwt.io?token=${accessToken}`, "_blank")
+    WebApp.openLink(`https://jwt.io?token=${accessToken}`)
+    // window.open(`https://jwt.io?token=${accessToken}`, "_blank")
   }
 
   function logout(){
@@ -68,8 +71,8 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
           <div className='user-info-row'><strong>Email:</strong><p>{userInfo.email}</p></div>
           {walletAddress && <div className='user-info-row'><strong>Wallet:</strong><p>{walletAddress}</p></div>}
           <div className='user-info-row space'><button onClick={idTokenClick}>Inspect Id Token</button><button onClick={accessTokenClick}>Inspect Access Token</button></div>
-          <hr className='divider' />
-          <ExternalWallets />
+          {/* <hr className='divider' />
+          <ExternalWallets /> */}
         </div>
         <div className='docs-link-container'>
           <a href='https://docs.immutable.com/docs/zkEVM/products/passport' target='_blank'>Immutable zkEVM Docs</a>
