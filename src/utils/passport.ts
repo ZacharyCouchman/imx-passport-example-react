@@ -17,6 +17,7 @@ export const passportInstance = new passport.Passport({
   clientId: passportClientId,
   redirectUri: passportRedirectUri,
   logoutRedirectUri: passportLogoutRedirectUri,
+  logoutMode: 'silent',
   audience: 'platform_api',
   scope: 'openid offline_access email transact',
 });

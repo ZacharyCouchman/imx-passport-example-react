@@ -9,9 +9,9 @@ import { passportDashboardUrl } from './utils/config';
 import { PassportContext } from './context/PassportContext';
 
 function App({passportInstance}: {passportInstance: passport.Passport}) {
-  const [userInfo, setUserInfo] = useState<UserProfile>();
+  const [userInfo, setUserInfo] = useState<UserProfile | null>(null);
   const [walletAddress, setWalletAddress] = useState<string>();
-  const {passportProvider} = useContext(PassportContext);
+  const {passportProvider,setPassportProvider} = useContext(PassportContext);
 
   useEffect(() => {
     const login = async () => {
@@ -35,9 +35,13 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
     
   }, [passportInstance])
 
-  const login = useCallback(async() =>{
+  const login = useCallback(async() => {
+    let passportProv = passportProvider;
+    if(!passportProv) {
+      passportProv = await passportInstance.connectEvm();
+    }
     try{
-      await passportProvider?.request({ method: 'eth_requestAccounts' });
+       await passportProv?.request({ method: 'eth_requestAccounts' });
     } catch(err) {
       console.log("Failed to login");
       console.error(err);
@@ -45,7 +49,7 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
 
     try{
       const userProfile = await passportInstance.getUserInfo();
-      setUserInfo(userProfile)
+      setUserInfo(userProfile || null)
     } catch(err) {
       console.log("Failed to fetch user info");
       console.error(err);
@@ -71,8 +75,10 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
     window.open(`https://jwt.io#token=${accessToken}`, "_blank")
   }
 
-  function logout(){
-    passportInstance.logout();
+  async function logout(){
+    await passportInstance.logout();
+    setPassportProvider(null);
+    setUserInfo(null);
   }
 
   return (
@@ -84,7 +90,7 @@ function App({passportInstance}: {passportInstance: passport.Passport}) {
           <div className='user-info-row'>
             <p><strong>Passport info</strong></p>
             <a href={passportDashboardUrl} target='_blank'>Passport Dashboard</a>
-            <PassportButton title="Logout" onClick={logout} />
+            <PassportButton title="Logout" onClick={async () => await logout()} />
           </div>
           <div className='user-info-row'><strong>Id:</strong><p>{userInfo.sub}</p></div>
           <div className='user-info-row'><strong>Email:</strong><p>{userInfo.email}</p></div>
